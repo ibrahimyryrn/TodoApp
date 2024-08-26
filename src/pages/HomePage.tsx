@@ -9,7 +9,7 @@ function HomePage() {
       try {
         const response = await getTodosWithId(
           "98b806e0-a72a-4c95-8f62-08a08f50f5c8",
-          `${import.meta.env.VITE_SUPABASE_ACCESS_TOKEN}`
+          `${import.meta.env.VITE_SUPABASE_API_KEY}`
         );
         console.log(response.data);
       } catch (error) {

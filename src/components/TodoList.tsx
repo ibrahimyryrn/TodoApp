@@ -44,7 +44,7 @@ function TodoList() {
                     <div ref={provided.innerRef} {...provided.draggableProps}>
                       <TodoShow
                         todo={todo}
-                        dragHandleProps={provided.dragHandleProps} // Drag handle props'u ekle
+                        dragHandleProps={provided.dragHandleProps}
                       />
                     </div>
                   )}
