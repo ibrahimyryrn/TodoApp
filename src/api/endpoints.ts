@@ -1,13 +1,67 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { TodoType } from "../types/Types";
 
-export const getTodosWithId = async (userId: string, accessToken: string) => {
+//GET PART
+export const getTodosWithId = async (
+  userId: string,
+  accessToken: string
+): Promise<TodoType[]> => {
   const headers = {
     Authorization: `Bearer ${accessToken}`,
     apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
   };
 
-  return await axios.get(
+  const response: AxiosResponse<TodoType[]> = await axios.get(
     `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?user_id=eq.${userId}`,
+    { headers }
+  );
+  return response.data;
+};
+
+//POST PART
+export const addTodoWithId = async (
+  todo: TodoType,
+  accessToken: string
+): Promise<void> => {
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  await axios.post(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos`, todo, {
+    headers,
+  });
+};
+
+//DELETE PART
+export const deleteTodoWithId = async (
+  id: number,
+  accessToken: string
+): Promise<void> => {
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+  };
+
+  await axios.delete(
+    `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?id=eq.${id}`,
+    { headers }
+  );
+};
+//UPDATE PART
+export const updateTodoWithId = async (
+  id: number,
+  todo: Partial<TodoType>,
+  accessToken: string
+): Promise<void> => {
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+  };
+  await axios.patch(
+    `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?id=eq.${id}`,
+    todo,
     { headers }
   );
 };
