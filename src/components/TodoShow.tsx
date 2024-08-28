@@ -14,11 +14,11 @@ interface TodoProps {
 }
 
 const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
-  const { id, content, title } = todo;
+  const { id, description, title } = todo;
   const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editTodo, setEditTodo] = useState(content);
+  const [editTodo, setEditTodo] = useState(description);
   const [editTodoTitle, setEditTodoTitle] = useState(title);
 
   const handleRemove = () => {
@@ -26,7 +26,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   };
 
   const handleEdit = () => {
-    setEditTodo(content);
+    setEditTodo(description);
     setEditTodoTitle(title);
     setIsModalOpen(true); // Modal'ı aç
   };
@@ -34,7 +34,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   const handleEditContent = () => {
     const payload = {
       id,
-      content: editTodo,
+      description: editTodo,
       title: editTodoTitle,
     };
     dispatch(editContentById(payload));
@@ -76,7 +76,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
                 <DragOutlined {...dragHandleProps} />
               </div>
             </div>
-            <li className="text-center">{content}</li>
+            <li className="text-center">{description}</li>
           </div>
         </div>
       </ul>

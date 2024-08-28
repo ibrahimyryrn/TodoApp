@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { createTodo } from "../redux/todoSlice";
 import Button from "./Button";
 import Input from "./Input";
 import Modal from "./Modal";
+import { createTodoSupabase, fetchTodosSupabase } from "../redux/supabaseSlice";
+import { AppDispatch } from "../redux/store";
 
 function TodoCreate() {
   const [newTodo, setNewTodo] = useState("");
   const [newTodoTitle, setNewTodoTitle] = useState("");
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const payload = {
+    user_id: "98b806e0-a72a-4c95-8f62-08a08f50f5c8",
+    description: newTodo,
+    title: newTodoTitle,
+  };
 
   function handleCreateTodo() {
     if (newTodo.trim().length === 0) {
@@ -24,16 +30,19 @@ function TodoCreate() {
       return;
     }
 
-    const payload = {
-      id: Math.floor(Math.random() * 99999),
-      content: newTodo,
-      title: newTodoTitle,
-    };
-    dispatch(createTodo(payload));
+    // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
+    // const fetchData = dispatch(fetchTodosSupabase(user_id));
+    // dispatch(createTodo(fetchData));
+    dispatch(createTodoSupabase(payload));
+
     setNewTodo("");
     setNewTodoTitle("");
     closeModal();
   }
+
+  useEffect(() => {
+    dispatch(fetchTodosSupabase(payload.user_id));
+  }, [dispatch, payload.user_id, isModalOpen]); //Burayı murata sor doğru bir çözüm mü  !!!
 
   return (
     <div className="w-[508px] h-10 mt-6">

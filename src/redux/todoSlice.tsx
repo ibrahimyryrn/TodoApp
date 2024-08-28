@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TodoInitialState, TodoType } from "../types/Types";
+import { fetchTodosSupabase } from "./supabaseSlice";
 
-const initialState: TodoInitialState = {
+export const initialState: TodoInitialState = {
   todos: [],
 };
 
@@ -9,9 +10,9 @@ export const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    createTodo: (state: TodoInitialState, action: PayloadAction<TodoType>) => {
-      state.todos = [...state.todos, action.payload];
-    },
+    // createTodo: (state: TodoInitialState, action: PayloadAction<TodoType>) => {
+    //   state.todos = [...state.todos, action.payload];
+    // },
     removeTodoById: (
       state: TodoInitialState,
       action: PayloadAction<number>
@@ -28,7 +29,7 @@ export const todoSlice = createSlice({
         todo.id === action.payload.id
           ? {
               ...todo,
-              content: action.payload.content,
+              content: action.payload.description,
               title: action.payload.title,
             }
           : todo
@@ -38,8 +39,20 @@ export const todoSlice = createSlice({
       state.todos = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(
+        fetchTodosSupabase.fulfilled,
+        (state: TodoInitialState, action: PayloadAction<TodoType[]>) => {
+          state.todos = action.payload;
+        }
+      )
+      .addCase(fetchTodosSupabase.rejected, (_, action) => {
+        // Hata durumunu ele alın
+        console.error("Failed to fetch todos:", action.payload);
+      });
+  },
 });
 
-export const { createTodo, removeTodoById, editContentById, setTodos } =
-  todoSlice.actions;
+export const { removeTodoById, editContentById, setTodos } = todoSlice.actions;
 export default todoSlice.reducer;

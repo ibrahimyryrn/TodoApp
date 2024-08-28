@@ -22,16 +22,21 @@ export const getTodosWithId = async (
 export const addTodoWithId = async (
   todo: TodoType,
   accessToken: string
-): Promise<void> => {
+): Promise<TodoType> => {
   const headers = {
     Authorization: `Bearer ${accessToken}`,
     apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
     "Content-Type": "application/json",
   };
 
-  await axios.post(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos`, todo, {
-    headers,
-  });
+  const response = await axios.post(
+    `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos`,
+    todo,
+    {
+      headers,
+    }
+  );
+  return response.data;
 };
 
 //DELETE PART
@@ -49,7 +54,7 @@ export const deleteTodoWithId = async (
     { headers }
   );
 };
-//UPDATE PART
+//PATCH PART
 export const updateTodoWithId = async (
   id: number,
   todo: Partial<TodoType>,
@@ -58,6 +63,7 @@ export const updateTodoWithId = async (
   const headers = {
     Authorization: `Bearer ${accessToken}`,
     apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+    "Content-Type": "application/json",
   };
   await axios.patch(
     `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?id=eq.${id}`,
