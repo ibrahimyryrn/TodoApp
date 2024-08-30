@@ -57,17 +57,18 @@ export const deleteTodoWithId = async (
 //PATCH PART
 export const updateTodoWithId = async (
   id: number,
-  todo: Partial<TodoType>,
+  todo: TodoType,
   accessToken: string
-): Promise<void> => {
+): Promise<TodoType> => {
   const headers = {
     Authorization: `Bearer ${accessToken}`,
     apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
     "Content-Type": "application/json",
   };
-  await axios.patch(
+  const response = await axios.patch(
     `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?id=eq.${id}`,
     todo,
     { headers }
   );
+  return response.data[0];
 };

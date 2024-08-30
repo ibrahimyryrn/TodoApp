@@ -1,12 +1,18 @@
 import { DeleteOutlined, DragOutlined, EditOutlined } from "@ant-design/icons";
 import { TodoType } from "../types/Types";
-import { editContentById, removeTodoById } from "../redux/todoSlice";
-import { useState } from "react";
+// import { editContentById } from "../redux/todoSlice";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { DraggableProvided } from "react-beautiful-dnd";
 import Modal from "./Modal";
 import Button from "./Button";
 import Input from "./Input";
+import {
+  editTodoSupabase,
+  fetchTodosSupabase,
+  removeTodoSupabase,
+} from "../redux/supabaseSlice";
+import { AppDispatch } from "../redux/store";
 
 interface TodoProps {
   todo: TodoType;
@@ -15,14 +21,14 @@ interface TodoProps {
 
 const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   const { id, description, title } = todo;
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(description);
   const [editTodoTitle, setEditTodoTitle] = useState(title);
 
   const handleRemove = () => {
-    dispatch(removeTodoById(id));
+    dispatch(removeTodoSupabase(id));
   };
 
   const handleEdit = () => {
@@ -30,16 +36,32 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
     setEditTodoTitle(title);
     setIsModalOpen(true); // Modal'ı aç
   };
+  const handleEditContent = async () => {
+    if (!id) {
+      console.error("ID is missing");
+      return;
+    }
 
-  const handleEditContent = () => {
     const payload = {
       id,
       description: editTodo,
       title: editTodoTitle,
     };
-    dispatch(editContentById(payload));
-    setIsModalOpen(false); // Modal'ı kapat
+
+    try {
+      await dispatch(editTodoSupabase(payload)).unwrap();
+      setIsModalOpen(false); // Modal'ı kapat
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
   };
+
+  const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
+
+  useEffect(() => {
+    dispatch(fetchTodosSupabase(user_id));
+    console.log("useeffect çalıştı");
+  }, [dispatch, isModalOpen]);
 
   const handleCheckboxChange = () => {
     setIsChecked((prev) => !prev);

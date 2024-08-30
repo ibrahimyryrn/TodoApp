@@ -4,21 +4,18 @@ import Button from "./Button";
 import Input from "./Input";
 import Modal from "./Modal";
 import { createTodoSupabase, fetchTodosSupabase } from "../redux/supabaseSlice";
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
+import { useSelector } from "react-redux";
 
 function TodoCreate() {
   const [newTodo, setNewTodo] = useState("");
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { todos } = useSelector((state: RootState) => state.todo);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const payload = {
-    user_id: "98b806e0-a72a-4c95-8f62-08a08f50f5c8",
-    description: newTodo,
-    title: newTodoTitle,
-  };
 
   function handleCreateTodo() {
     if (newTodo.trim().length === 0) {
@@ -29,20 +26,26 @@ function TodoCreate() {
       alert("Create a Title");
       return;
     }
-
+    const payload = {
+      user_id: "98b806e0-a72a-4c95-8f62-08a08f50f5c8",
+      description: newTodo,
+      title: newTodoTitle,
+    };
     // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
     // const fetchData = dispatch(fetchTodosSupabase(user_id));
     // dispatch(createTodo(fetchData));
     dispatch(createTodoSupabase(payload));
-
+    console.log("todocreate çalıştı");
     setNewTodo("");
     setNewTodoTitle("");
     closeModal();
   }
-
+  const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
   useEffect(() => {
-    dispatch(fetchTodosSupabase(payload.user_id));
-  }, [dispatch, payload.user_id, isModalOpen]); //Burayı murata sor doğru bir çözüm mü  !!!
+    dispatch(fetchTodosSupabase(user_id));
+    console.log("useeffect çalıştı");
+  }, [dispatch, isModalOpen]);
+  console.log("todos", todos);
 
   return (
     <div className="w-[508px] h-10 mt-6">
