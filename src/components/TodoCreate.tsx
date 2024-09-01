@@ -10,9 +10,11 @@ import { useSelector } from "react-redux";
 function TodoCreate() {
   const [newTodo, setNewTodo] = useState("");
   const [newTodoTitle, setNewTodoTitle] = useState("");
-  const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { todos } = useSelector((state: RootState) => state.todo);
+  const dispatch = useDispatch<AppDispatch>();
+  const { userId } = useSelector((state: RootState) => state.userId);
+  console.log("userId", userId);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -27,7 +29,6 @@ function TodoCreate() {
       return;
     }
     const payload = {
-      user_id: "98b806e0-a72a-4c95-8f62-08a08f50f5c8",
       description: newTodo,
       title: newTodoTitle,
     };
@@ -40,11 +41,11 @@ function TodoCreate() {
     setNewTodoTitle("");
     closeModal();
   }
-  const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
+  // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
   useEffect(() => {
-    dispatch(fetchTodosSupabase(user_id));
+    dispatch(fetchTodosSupabase(userId));
     console.log("useeffect çalıştı");
-  }, [dispatch, isModalOpen]);
+  }, [dispatch, isModalOpen, userId]);
   console.log("todos", todos);
 
   return (

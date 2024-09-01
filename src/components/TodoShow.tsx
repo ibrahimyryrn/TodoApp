@@ -12,7 +12,8 @@ import {
   fetchTodosSupabase,
   removeTodoSupabase,
 } from "../redux/supabaseSlice";
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
+import { useSelector } from "react-redux";
 
 interface TodoProps {
   todo: TodoType;
@@ -26,6 +27,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(description);
   const [editTodoTitle, setEditTodoTitle] = useState(title);
+  const { userId } = useSelector((state: RootState) => state.userId);
 
   const handleRemove = () => {
     dispatch(removeTodoSupabase(id));
@@ -56,12 +58,12 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
     }
   };
 
-  const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
+  // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
 
   useEffect(() => {
-    dispatch(fetchTodosSupabase(user_id));
+    dispatch(fetchTodosSupabase(userId));
     console.log("useeffect çalıştı");
-  }, [dispatch, isModalOpen]);
+  }, [dispatch, isModalOpen, userId]);
 
   const handleCheckboxChange = () => {
     setIsChecked((prev) => !prev);

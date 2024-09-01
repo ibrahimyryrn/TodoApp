@@ -15,6 +15,7 @@ export const getTodosWithId = async (
     `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?user_id=eq.${userId}`,
     { headers }
   );
+  console.log("userId getTodos fonksiyonu", userId);
   return response.data;
 };
 
