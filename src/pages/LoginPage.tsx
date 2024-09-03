@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { setToken } from "../utils/cookies";
+import { setAuthData } from "../utils/cookies";
 import { useDispatch } from "react-redux";
 import { setuserId } from "../redux/userIdSlice";
 
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
         if (response.data.access_token) {
           // console.log("login page", response.data.access_token);
           dispatch(setuserId(response.data.user.id));
-          setToken(response.data.access_token); // Token'ı cookie'ye kaydedin
+          setAuthData(response.data.access_token, response.data.user.id); // Token'ı cookie'ye kaydedin
         }
 
         navigate("/home");

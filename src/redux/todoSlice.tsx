@@ -14,31 +14,6 @@ export const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    // createTodo: (state: TodoInitialState, action: PayloadAction<TodoType>) => {
-    //   state.todos = [...state.todos, action.payload];
-    // },
-    // removeTodoById: (
-    //   state: TodoInitialState,
-    //   action: PayloadAction<number>
-    // ) => {
-    //   state.todos = state.todos.filter(
-    //     (todo: TodoType) => todo.id !== action.payload
-    //   );
-    // },
-    // editContentById: (
-    //   state: TodoInitialState,
-    //   action: PayloadAction<TodoType>
-    // ) => {
-    //   state.todos = state.todos.map((todo: TodoType) =>
-    //     todo.id === action.payload.id
-    //       ? {
-    //           ...todo,
-    //           content: action.payload.description,
-    //           title: action.payload.title,
-    //         }
-    //       : todo
-    //   );
-    // },
     setTodos: (state: TodoInitialState, action: PayloadAction<TodoType[]>) => {
       state.todos = action.payload;
     },
@@ -51,10 +26,10 @@ export const todoSlice = createSlice({
           state.todos = action.payload;
         }
       )
-      .addCase(fetchTodosSupabase.rejected, (_, action) => {
-        // Hata durumunu ele alın
-        console.error("Failed to fetch todos:", action.payload);
-      })
+      // .addCase(fetchTodosSupabase.rejected, (_, action) => {
+      //   // Hata durumunu ele alın
+      //   console.error("Failed to fetch todos:", action.payload);
+      // })
       .addCase(
         removeTodoSupabase.fulfilled,
         (state: TodoInitialState, action: PayloadAction<number>) => {
@@ -66,15 +41,11 @@ export const todoSlice = createSlice({
       .addCase(
         editTodoSupabase.fulfilled,
         (state: TodoInitialState, action: PayloadAction<TodoType>) => {
-          console.log("Payload:", action.payload);
-
-          if (action.payload && action.payload.id) {
-            const index = state.todos.findIndex(
-              (todo) => todo.id === action.payload.id
+          const updatedTodo = action.payload;
+          if (updatedTodo && updatedTodo.id) {
+            state.todos = state.todos.map((todo) =>
+              todo.id === updatedTodo.id ? updatedTodo : todo
             );
-            if (index !== -1) {
-              state.todos[index] = action.payload;
-            }
           } else {
             console.error(
               "Action payload is missing or does not have an id:",
@@ -82,7 +53,11 @@ export const todoSlice = createSlice({
             );
           }
         }
-      );
+      )
+      .addCase(editTodoSupabase.rejected, (_, action) => {
+        // Hata durumunu ele alın
+        console.error("Failed to edit todo:", action.payload);
+      });
   },
 });
 

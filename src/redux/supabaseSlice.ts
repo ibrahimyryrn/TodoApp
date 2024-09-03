@@ -6,22 +6,21 @@ import {
   updateTodoWithId,
 } from "../api/endpoints";
 import { TodoType } from "../types/Types";
-import { getToken } from "../utils/cookies";
-
-const accessToken = getToken();
+import { getAuthData } from "../utils/cookies";
 
 export const fetchTodosSupabase = createAsyncThunk<TodoType[], string>(
   "todos/fetchData", // Type string: Bu action'ın adıdır
   async (user_id: string, { rejectWithValue }) => {
-    if (!accessToken) {
+    const { token } = getAuthData();
+    if (!token) {
       return rejectWithValue("No access token found");
     }
     try {
-      const response = await getTodosWithId(user_id, accessToken);
-      console.log(response);
+      const response = await getTodosWithId(user_id, token);
+
       return response;
     } catch (error) {
-      console.log("Error fetching todos", error);
+      // console.log("Error fetching todos", error);
       return rejectWithValue("Error fetching todos");
     }
   }
@@ -30,11 +29,12 @@ export const fetchTodosSupabase = createAsyncThunk<TodoType[], string>(
 export const createTodoSupabase = createAsyncThunk<TodoType, TodoType>(
   "todos/createTodo",
   async (todo: TodoType, { rejectWithValue }) => {
-    if (!accessToken) {
+    const { token } = getAuthData();
+    if (!token) {
       return rejectWithValue("No access token found");
     }
     try {
-      const response = await addTodoWithId(todo, accessToken);
+      const response = await addTodoWithId(todo, token);
 
       return response;
     } catch (error) {
@@ -47,11 +47,12 @@ export const createTodoSupabase = createAsyncThunk<TodoType, TodoType>(
 export const removeTodoSupabase = createAsyncThunk<number, number>(
   "todos/removeTodo",
   async (id: number, { rejectWithValue }) => {
-    if (!accessToken) {
+    const { token } = getAuthData();
+    if (!token) {
       return rejectWithValue("No access token found");
     }
     try {
-      await deleteTodoWithId(id, accessToken);
+      await deleteTodoWithId(id, token);
       return id;
     } catch (error) {
       console.log("Error posting todos", error);
@@ -63,11 +64,13 @@ export const removeTodoSupabase = createAsyncThunk<number, number>(
 export const editTodoSupabase = createAsyncThunk<TodoType, TodoType>(
   "todos/editTodo",
   async (todo: TodoType, { rejectWithValue }) => {
-    if (!accessToken) {
+    const { token } = getAuthData();
+    if (!token) {
       return rejectWithValue("No access token found");
     }
     try {
-      const response = await updateTodoWithId(todo.id, todo, accessToken);
+      const response = await updateTodoWithId(todo.id, todo, token);
+      console.log("edittodusupabse", response);
       return response;
     } catch (error) {
       console.log("Error posting todos", error);

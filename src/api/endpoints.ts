@@ -15,7 +15,7 @@ export const getTodosWithId = async (
     `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?user_id=eq.${userId}`,
     { headers }
   );
-  console.log("userId getTodos fonksiyonu", userId);
+
   return response.data;
 };
 
@@ -71,5 +71,29 @@ export const updateTodoWithId = async (
     todo,
     { headers }
   );
+  console.log("Yanıt verisi:", response); // Yanıt verisini loglayın
   return response.data[0];
+};
+
+export const updateTodoCompletionStatus = async (
+  id: number,
+  isCompleted: boolean | undefined,
+  accessToken: string | undefined
+): Promise<void> => {
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  try {
+    await axios.patch(
+      `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/todos?id=eq.${id}`,
+      { is_completed: isCompleted },
+      { headers }
+    );
+    console.log("Todo başarıyla güncellendi");
+  } catch (error) {
+    console.error("Todo güncellenirken bir hata oluştu:", error);
+  }
 };

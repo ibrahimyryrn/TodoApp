@@ -12,8 +12,9 @@ import {
   fetchTodosSupabase,
   removeTodoSupabase,
 } from "../redux/supabaseSlice";
-import { AppDispatch, RootState } from "../redux/store";
-import { useSelector } from "react-redux";
+import { AppDispatch } from "../redux/store";
+import { updateTodoCompletionStatus } from "../api/endpoints";
+import { getAuthData } from "../utils/cookies";
 
 interface TodoProps {
   todo: TodoType;
@@ -21,33 +22,35 @@ interface TodoProps {
 }
 
 const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
-  const { id, description, title } = todo;
+  const { id, description, title, userId, is_completed } = todo;
   const dispatch = useDispatch<AppDispatch>();
-  const [isChecked, setIsChecked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(description);
   const [editTodoTitle, setEditTodoTitle] = useState(title);
-  const { userId } = useSelector((state: RootState) => state.userId);
+  // const { userId } = useSelector((state: RootState) => state.userId);
 
   const handleRemove = () => {
     dispatch(removeTodoSupabase(id));
   };
 
   const handleEdit = () => {
+    console.log("handleeditteyim", id);
     setEditTodo(description);
     setEditTodoTitle(title);
     setIsModalOpen(true); // Modal'ı aç
   };
-  const handleEditContent = async () => {
+
+  const handleEditContent = async (id: number) => {
     if (!id) {
       console.error("ID is missing");
       return;
     }
-
     const payload = {
-      id,
+      id: todo.id,
       description: editTodo,
       title: editTodoTitle,
+      userId: todo.userId,
+      is_completed: todo.is_completed,
     };
 
     try {
@@ -62,12 +65,21 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
 
   useEffect(() => {
     dispatch(fetchTodosSupabase(userId));
-    console.log("useeffect çalıştı");
   }, [dispatch, isModalOpen, userId]);
 
-  const handleCheckboxChange = () => {
-    setIsChecked((prev) => !prev);
+  const handleCheckboxChange = async (
+    id: number,
+    currentStatus: boolean | undefined
+  ) => {
+    const { token } = getAuthData();
+    const newStatus = !currentStatus;
+
+    await updateTodoCompletionStatus(id, newStatus, token);
   };
+  // useEffect(() => {
+  //   console.log("useEffect çalıştı");
+  //   dispatch(fetchTodosSupabase(userId));
+  // }, [todo.is_completed]); Denedim ama olmadı hala sayfayı yenilemeden ui değişmiyor!
 
   const closeModal = () => setIsModalOpen(false);
 
@@ -75,7 +87,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
     <>
       <ul
         className={`flex items-center w-auto mt-3 p-1 gap-3 ${
-          isChecked ? "line-through" : ""
+          is_completed ? "line-through" : ""
         }`}
       >
         <div className="flex items-center flex-col mt-5 w-[500px] space-y-4 border border-gray-300 p-4 rounded">
@@ -83,8 +95,10 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
             <div className="flex justify-between mb-4">
               <input
                 type="checkbox"
-                checked={isChecked}
-                onChange={handleCheckboxChange}
+                checked={is_completed}
+                onChange={() =>
+                  handleCheckboxChange(todo.id, todo.is_completed)
+                }
                 className="form-checkbox h-4 w-4"
               />
               <li className="text-center font-bold">{title}</li>
@@ -134,7 +148,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
           </div>
 
           <Button
-            onClick={handleEditContent}
+            onClick={() => handleEditContent(id)}
             className="w-40 h-10 mt-2 p-1 border border-gray-400 rounded-lg bg-black font-medium text-white hover:bg-blue-700"
           >
             Save Task
