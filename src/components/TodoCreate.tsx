@@ -5,7 +5,9 @@ import Input from "./Input";
 import Modal from "./Modal";
 import { createTodoSupabase, fetchTodosSupabase } from "../redux/supabaseSlice";
 import { AppDispatch } from "../redux/store";
-import { getAuthData } from "../utils/cookies";
+import { getAuthData, removeAuthData } from "../utils/cookies";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function TodoCreate() {
   const [newTodo, setNewTodo] = useState("");
@@ -15,6 +17,7 @@ function TodoCreate() {
   const dispatch = useDispatch<AppDispatch>();
   // const { userId } = useSelector((state: RootState) => state.userId);
   const { userId } = getAuthData();
+  const navigate = useNavigate();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -52,16 +55,48 @@ function TodoCreate() {
     }
   }, [dispatch, isModalOpen, userId]);
 
+  const handleLogout = async () => {
+    const { token } = getAuthData();
+
+    try {
+      await axios.post(
+        "https://oznnkyasreusdkcvhggc.supabase.co/auth/v1/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            apikey: `${import.meta.env.VITE_SUPABASE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      removeAuthData();
+
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <div className="w-[508px] h-10 mt-6">
       <div className="flex justify-between">
         <h1 className="font-bold text-3xl">Todo List</h1>
-        <Button
-          onClick={openModal}
-          className="px-4 py-2 bg-black text-white rounded hover:bg-blue-700"
-        >
-          Add Task
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            onClick={openModal}
+            className="px-4 py-2 bg-black text-white rounded hover:bg-blue-700"
+          >
+            Add Task
+          </Button>
+          <Button
+            className="px-4 py-2 bg-black text-white rounded hover:bg-blue-700 ml-auto"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </div>
       </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>

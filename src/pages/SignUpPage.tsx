@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface SignupFormData {
   email: string;
@@ -9,6 +10,7 @@ interface SignupFormData {
 }
 
 const Signup: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -37,9 +39,15 @@ const Signup: React.FC = () => {
         console.error("Error signing up:", response.data.error.message);
       } else {
         console.log("User signed up:", response.data.user);
+        // Kullanıcıyı başarılı bir kayıt sonrası yönlendirme veya bilgilendirme yapılabilir
+        navigate("/");
       }
     } catch (error) {
-      console.error("Signup failed:", error);
+      if (error.response?.status === 429) {
+        console.error("Too many requests. Please try again later.");
+      } else {
+        console.error("Signup failed:", error);
+      }
     }
   };
 

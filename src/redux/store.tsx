@@ -5,7 +5,7 @@ import userIdReducer from "../redux/userIdSlice";
 export const store = configureStore({
   reducer: {
     todo: todoReducer,
-    userId: userIdReducer,
+    userEmail: userIdReducer,
   },
 });
 
