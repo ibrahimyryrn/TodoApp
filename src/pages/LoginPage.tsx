@@ -58,6 +58,7 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
+      console.log(data.email, data.password);
       alert("An error occurred during login. Please try again.");
     }
   };
