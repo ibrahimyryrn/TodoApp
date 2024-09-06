@@ -39,8 +39,11 @@ const Signup: React.FC = () => {
         console.error("Error signing up:", response.data.error.message);
       } else {
         console.log("User signed up:", response.data.user);
-        // Kullanıcıyı başarılı bir kayıt sonrası yönlendirme veya bilgilendirme yapılabilir
-        navigate("/");
+
+        setTimeout(() => {
+          alert("Successfully signed up! Redirecting to login page...");
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
       if (error.response?.status === 429) {
