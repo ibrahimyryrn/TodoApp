@@ -2,30 +2,27 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { setAuthData } from "../utils/cookies";
-import { useDispatch } from "react-redux";
-import { setuserId } from "../redux/userIdSlice";
 
-interface LoginFormData {
+interface SignupFormData {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const Login: React.FC = () => {
-  const dispatch = useDispatch();
-
+const Signup: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>();
-  const navigate = useNavigate();
+    watch,
+  } = useForm<SignupFormData>();
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: SignupFormData) => {
     try {
       const { email, password } = data;
       const response = await axios.post(
-        "https://oznnkyasreusdkcvhggc.supabase.co/auth/v1/token?grant_type=password",
+        "https://oznnkyasreusdkcvhggc.supabase.co/auth/v1/signup",
         {
           email,
           password,
@@ -38,30 +35,26 @@ const Login: React.FC = () => {
         }
       );
 
-      console.log(response.data);
-
       if (response.data.error) {
-        if (response.data.error.message.includes("Invalid login credentials")) {
-          alert("Invalid credentials, please try again.");
-        } else if (response.data.error.message.includes("No user found")) {
-          alert("No account found with this email. Please sign up.");
-        }
+        console.error("Error signing up:", response.data.error.message);
       } else {
-        console.log("User logged in:", response.data.user);
-        if (response.data.access_token) {
-          // console.log("login page", response.data.access_token);
-          dispatch(setuserId(response.data.user.id));
-          setAuthData(response.data.access_token, response.data.user.id); // Token'ı cookie'ye kaydedin
-        }
+        console.log("User signed up:", response.data.user);
 
-        navigate("/home");
+        setTimeout(() => {
+          alert("Successfully signed up! Redirecting to login page...");
+          navigate("/");
+        }, 1000);
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      console.log(data.email, data.password);
-      alert("An error occurred during login. Please try again.");
+      if (error.response?.status === 429) {
+        console.error("Too many requests. Please try again later.");
+      } else {
+        console.error("Signup failed:", error);
+      }
     }
   };
+
+  const password = watch("password");
 
   return (
     <div className="flex justify-center items-center h-screen bg-white">
@@ -69,7 +62,7 @@ const Login: React.FC = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-6 rounded shadow-md w-96"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
 
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">Email</label>
@@ -97,6 +90,19 @@ const Login: React.FC = () => {
             type="password"
             {...register("password", {
               required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+              maxLength: {
+                value: 16,
+                message: "Password must be no more than 16 characters",
+              },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,16}$/,
+                message:
+                  "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+              },
             })}
             className={`w-full p-2 border rounded ${
               errors.password ? "border-red-500" : "border-gray-300"
@@ -109,24 +115,37 @@ const Login: React.FC = () => {
           )}
         </div>
 
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            {...register("confirmPassword", {
+              required: "Please confirm your password",
+              validate: (value) =>
+                value === password || "Passwords do not match",
+            })}
+            className={`w-full p-2 border rounded ${
+              errors.confirmPassword ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
+
         <button
           type="submit"
           className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
         >
-          Login
+          Sign Up
         </button>
-
-        <div className="mt-4 text-center">
-          <p>
-            Don't have an account?{" "}
-            <a href="/signup" className="text-blue-500 hover:text-blue-700">
-              Sign up
-            </a>
-          </p>
-        </div>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

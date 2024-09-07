@@ -41,12 +41,11 @@ function TodoList() {
                   index={index}
                 >
                   {(provided: DraggableProvided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TodoShow todo={todo} />
+                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                      <TodoShow
+                        todo={todo}
+                        dragHandleProps={provided.dragHandleProps}
+                      />
                     </div>
                   )}
                 </Draggable>
