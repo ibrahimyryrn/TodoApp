@@ -22,7 +22,7 @@ interface TodoProps {
 }
 
 const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
-  const { id, description, title, userId, is_completed } = todo;
+  const { id, description, title, user_id, is_completed } = todo;
   const dispatch = useDispatch<AppDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(description);
@@ -49,7 +49,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
       id: todo.id,
       description: editTodo,
       title: editTodoTitle,
-      userId: todo.userId,
+      user_id: todo.user_id,
       is_completed: todo.is_completed,
     };
 
@@ -64,8 +64,8 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
 
   useEffect(() => {
-    dispatch(fetchTodosSupabase(userId));
-  }, [dispatch, isModalOpen, userId]);
+    dispatch(fetchTodosSupabase(user_id));
+  }, [dispatch, isModalOpen, user_id]);
 
   const handleCheckboxChange = async (
     id: number,

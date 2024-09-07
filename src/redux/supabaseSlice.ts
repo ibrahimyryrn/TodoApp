@@ -7,6 +7,7 @@ import {
 } from "../api/endpoints";
 import { TodoType } from "../types/Types";
 import { getAuthData } from "../utils/cookies";
+import axios from "axios";
 
 export const fetchTodosSupabase = createAsyncThunk<TodoType[], string>(
   "todos/fetchData", // Type string: Bu action'ın adıdır
@@ -20,8 +21,15 @@ export const fetchTodosSupabase = createAsyncThunk<TodoType[], string>(
 
       return response;
     } catch (error) {
-      // console.log("Error fetching todos", error);
-      return rejectWithValue("Error fetching todos");
+      if (axios.isAxiosError(error)) {
+        console.log(
+          "Error fetching todos",
+          error.response?.data || error.message
+        );
+        return rejectWithValue(error.response?.data || "Error fetching todos");
+      } else {
+        return rejectWithValue("An unknown error occurred");
+      }
     }
   }
 );

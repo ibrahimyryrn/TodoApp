@@ -31,9 +31,13 @@ function TodoCreate() {
       alert("Create a Title");
       return;
     }
+    function generateUniqueId() {
+      return Math.floor(Math.random() * 10000);
+    }
 
     const payload = {
-      user_id: userId,
+      id: generateUniqueId(),
+      user_id: userId || "",
       description: newTodo,
       title: newTodoTitle,
     };

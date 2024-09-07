@@ -3,7 +3,7 @@ export interface TodoInitialState {
 }
 export interface TodoType {
   id: number;
-  userId: string;
+  user_id: string;
   description: string;
   title: string;
   is_completed?: boolean;
