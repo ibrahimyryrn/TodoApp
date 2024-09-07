@@ -76,10 +76,11 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
 
     await updateTodoCompletionStatus(id, newStatus, token);
   };
+
   // useEffect(() => {
   //   console.log("useEffect çalıştı");
   //   dispatch(fetchTodosSupabase(userId));
-  // }, [todo.is_completed]); Denedim ama olmadı hala sayfayı yenilemeden ui değişmiyor!
+  // }, [dispatch, todo.is_completed, userId]);
 
   const closeModal = () => setIsModalOpen(false);
 
