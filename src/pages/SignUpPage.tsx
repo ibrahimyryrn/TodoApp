@@ -45,11 +45,18 @@ const Signup: React.FC = () => {
           navigate("/");
         }, 1000);
       }
-    } catch (error) {
-      if (error.response?.status === 429) {
-        console.error("Too many requests. Please try again later.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 429) {
+          console.error("Too many requests. Please try again later.");
+        } else {
+          console.error(
+            "Signup failed:",
+            error.response?.data || error.message
+          );
+        }
       } else {
-        console.error("Signup failed:", error);
+        console.error("Unexpected error:", error);
       }
     }
   };
