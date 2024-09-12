@@ -13,6 +13,7 @@ function TodoCreate() {
   const [newTodo, setNewTodo] = useState("");
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
   // const { todos } = useSelector((state: RootState) => state.todo);
   const dispatch = useDispatch<AppDispatch>();
   // const { userId } = useSelector((state: RootState) => state.userId);
@@ -45,19 +46,22 @@ function TodoCreate() {
     // const fetchData = dispatch(fetchTodosSupabase(user_id));
     // dispatch(createTodo(fetchData));
     dispatch(createTodoSupabase(payload));
+    setIsCreated(true);
     setNewTodo("");
     setNewTodoTitle("");
     closeModal();
   }
   // const user_id = "98b806e0-a72a-4c95-8f62-08a08f50f5c8";
   useEffect(() => {
+    console.log("burda");
     const { userId } = getAuthData();
     if (userId) {
       dispatch(fetchTodosSupabase(userId));
     } else {
       console.error("User ID is undefined");
     }
-  }, [dispatch, isModalOpen, userId]);
+    setIsCreated(false);
+  }, [dispatch, isCreated]);
 
   const handleLogout = async () => {
     const { token } = getAuthData();
