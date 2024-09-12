@@ -34,7 +34,6 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   };
 
   const handleEdit = () => {
-    console.log("handleeditteyim", id);
     setEditTodo(description);
     setEditTodoTitle(title);
     setIsModalOpen(true); // Modal'ı aç
@@ -65,7 +64,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
 
   useEffect(() => {
     dispatch(fetchTodosSupabase(user_id));
-  }, [dispatch, isModalOpen, user_id]);
+  }, [dispatch, isModalOpen, user_id, is_completed]);
 
   const handleCheckboxChange = async (
     id: number,
