@@ -71,7 +71,7 @@ export const updateTodoWithId = async (
     todo,
     { headers }
   );
-  console.log("Yanıt verisi:", response); // Yanıt verisini loglayın
+  console.log("Yanıt verisi:", response); 
   return response.data[0];
 };
 

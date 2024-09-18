@@ -27,7 +27,6 @@ export const todoSlice = createSlice({
         }
       )
       // .addCase(fetchTodosSupabase.rejected, (_, action) => {
-      //   // Hata durumunu ele alın
       //   console.error("Failed to fetch todos:", action.payload);
       // })
       .addCase(
@@ -55,7 +54,6 @@ export const todoSlice = createSlice({
         }
       )
       .addCase(editTodoSupabase.rejected, (_, action) => {
-        // Hata durumunu ele alın
         console.error("Failed to edit todo:", action.payload);
       });
   },

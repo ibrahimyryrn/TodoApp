@@ -10,7 +10,7 @@ import { getAuthData } from "../utils/cookies";
 import axios from "axios";
 
 export const fetchTodosSupabase = createAsyncThunk<TodoType[], string>(
-  "todos/fetchData", // Type string: Bu action'ın adıdır
+  "todos/fetchData", 
   async (user_id: string, { rejectWithValue }) => {
     const { token } = getAuthData();
     if (!token) {
