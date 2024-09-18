@@ -51,7 +51,7 @@ const Login: React.FC = () => {
         if (response.data.access_token) {
           // console.log("login page", response.data.access_token);
           dispatch(setuserId(response.data.user.id));
-          setAuthData(response.data.access_token, response.data.user.id); // Token'ı cookie'ye kaydedin
+          setAuthData(response.data.access_token, response.data.user.id); 
         }
 
         navigate("/home");

@@ -14,9 +14,7 @@ function TodoCreate() {
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
-  // const { todos } = useSelector((state: RootState) => state.todo);
   const dispatch = useDispatch<AppDispatch>();
-  // const { userId } = useSelector((state: RootState) => state.userId);
   const { userId } = getAuthData();
   const navigate = useNavigate();
 

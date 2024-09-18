@@ -1,6 +1,5 @@
 import { DeleteOutlined, DragOutlined, EditOutlined } from "@ant-design/icons";
 import { TodoType } from "../types/Types";
-// import { editContentById } from "../redux/todoSlice";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { DraggableProvided } from "react-beautiful-dnd";
@@ -27,6 +26,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(description);
   const [editTodoTitle, setEditTodoTitle] = useState(title);
+  const [flag,setFlag] = useState(false)
   // const { userId } = useSelector((state: RootState) => state.userId);
 
   const handleRemove = () => {
@@ -54,7 +54,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
 
     try {
       await dispatch(editTodoSupabase(payload)).unwrap();
-      setIsModalOpen(false); // Modal'ı kapat
+      setIsModalOpen(false); 
     } catch (error) {
       console.error("Failed to update todo:", error);
     }
@@ -64,7 +64,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
 
   useEffect(() => {
     dispatch(fetchTodosSupabase(user_id));
-  }, [dispatch, isModalOpen, user_id, is_completed]);
+  }, [dispatch, isModalOpen, user_id,flag]);
 
   const handleCheckboxChange = async (
     id: number,
@@ -74,6 +74,7 @@ const TodoShow: React.FC<TodoProps> = ({ todo, dragHandleProps }) => {
     const newStatus = !currentStatus;
 
     await updateTodoCompletionStatus(id, newStatus, token);
+    setFlag(flag=>!flag)
   };
 
   // useEffect(() => {
